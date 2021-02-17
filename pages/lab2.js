@@ -30,6 +30,8 @@ export default function Lab2Index(props) {
       <br />
       <img src="/lab2.png" width={"100%"} />
       <br />
+      <br />
+      <br />
       <h1>Гүйцэтгэл</h1>
       <br />
       <TodoContext.Provider value={{ data }}>

@@ -54,6 +54,7 @@ export default function TodoApp(props) {
     <GridContainer justify="center">
       <GridItem md={4} xs={12}>
         <Input
+          placeholder="lorem ipsum"
           value={todoName}
           onChange={(event) => setTodoName(event.target.value)}
         />
