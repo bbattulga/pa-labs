@@ -15,9 +15,9 @@ import { Check } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 
 const todoClient = axios.create({
-  baseURL: process.env.API_URL || "http://localhost",
+  baseURL: process.env.API_URL,
 });
-console.log(process.env.API_URL || "http://localhost");
+console.log(process.env.API_URL);
 const useStyles = makeStyles({
   invalid: {
     color: "red",
