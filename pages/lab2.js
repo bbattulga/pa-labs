@@ -21,7 +21,7 @@ export default function Lab2Index(props) {
   const { data } = props;
   return (
     <PageContainer>
-      <h1>Лаборатори 1 Даалгавар</h1>
+      <h1>Лаборатори 2 Даалгавар</h1>
       <br />
       <h3>
         Сүлжээ тасарсан үед өгөгдлөө өөр дээрээ хадгалж байгаад сүлжээтэй
