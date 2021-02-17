@@ -26,70 +26,59 @@ const useStyles = makeStyles({
     color: "green",
   },
 });
+
+const retryInterval = 5000;
+
+let failCount = 0;
 export default function TodoItem({ todo, onDelete }) {
   const classes = useStyles();
   const [stateName, setStateName] = useState("");
 
-  const tryTill = async ({ f, onFail }) => {
-    let failCount = 0;
-    while (true) {
-      try {
-        await f();
-        break;
-      } catch (e) {
-        if (onFail) {
-          onFail(++failCount);
-        }
-        await new Promise((r) => setTimeout(r, 5000));
-      }
-    }
-  };
-
-  const tryTillSave = async () => {
-    const save = async () => {
+  const save = async () => {
+    try {
+      failCount = 0;
+      console.error(`CREATE ${todo.title}`);
       const response = await todoClient.post("/api/todos/create", todo);
       // create success
       todo.id = response.data;
-    };
-    await tryTill({
-      f: save,
-      onFail: (failCount) => {
-        setStateName(`Retrying to save(${++failCount})...`);
-      },
-    });
+      setStateName("Saved");
+    } catch (e) {
+      console.error(`${todo.title} create failed`);
+      setStateName(`Retrying to add...`);
+    }
   };
 
   useEffect(() => {
     if (!todo.id) {
-      (async () => {
-        setStateName("Saving...");
-        await tryTillSave();
-        setStateName("Saved");
-      })();
+      setStateName("Saving...");
+      let interval = setInterval(save, retryInterval);
+      return () => clearInterval(interval);
     } else {
       setStateName("Saved");
     }
   }, [todo.id]);
 
-  const handleDelete = async () => {
-    if (!todo.id) {
-      return;
-    }
-    setStateName("Deleting...");
-    const del = async () => {
+  const del = async () => {
+    try {
+      failCount = 0;
+      console.error(`del ${todo.title}`);
       const response = await todoClient.post("/api/todos/delete", {
         ids: [todo.id],
       });
       if (onDelete != null) {
         onDelete(todo.id);
       }
-    };
-    await tryTill({
-      f: del,
-      onFail: (i) => {
-        setStateName(`Retrying to delete(${i})...`);
-      },
-    });
+    } catch (e) {
+      console.error(`${todo.title} del failed`);
+      setStateName("Failed to delete");
+    }
+  };
+  const handleDelete = async () => {
+    if (!todo.id) {
+      return;
+    }
+    setStateName("Deleting...");
+    del();
   };
   const stateColor = useMemo(() => {
     if (stateName === "Saved") {

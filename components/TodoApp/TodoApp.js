@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext, useMemo, useRef } from "react";
 import List from "@material-ui/core/List/List";
 import useSwr from "swr";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -34,18 +34,18 @@ const useStyles = makeStyles({
 
 export default function TodoApp(props) {
   const classes = useStyles();
-
-  const [todoName, setTodoName] = useState("");
   const { data } = useContext(TodoContext);
   const [todos, setTodos] = useState(data);
+  const [todoName, setTodoName] = useState("");
 
   const handleSubmit = async () => {
+    console.error(todoName);
     if (!todoName || todoName === "") {
       return;
     }
-    setTodoName("");
-    const todo = { title: todoName, created_at: `${Date()}` };
+    const todo = { title: `${todoName}`, created_at: `${Date()}` };
     setTodos([todo, ...todos]);
+    setTodoName("");
   };
   const handleDelete = async (id) => {
     setTodos(todos.filter((t) => t.id != id));
@@ -54,9 +54,9 @@ export default function TodoApp(props) {
     <GridContainer justify="center">
       <GridItem md={4} xs={12}>
         <Input
-          placeholder="lorem ipsum"
           value={todoName}
-          onChange={(event) => setTodoName(event.target.value)}
+          onChange={(e) => setTodoName(e.target.value)}
+          placeholder="lorem ipsum"
         />
         <div></div>
         <Button color="primary" onClick={handleSubmit}>
@@ -65,8 +65,12 @@ export default function TodoApp(props) {
       </GridItem>
       <GridItem md={8} xs={12}>
         <div className={classes.todosContainer}>
-          {todos.map((t) => (
-            <TodoItem todo={t} onDelete={handleDelete} />
+          {todos.map((todo) => (
+            <TodoItem
+              key={`${todo.id}${todo.title}${todo.created_at}`}
+              todo={todo}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       </GridItem>
