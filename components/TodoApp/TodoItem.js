@@ -14,6 +14,10 @@ import IconButton from "@material-ui/core/IconButton";
 import { Check } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 
+const todoClient = axios.create({
+  baseURL: process.env.API_URL || "http://localhost",
+});
+console.log(process.env.API_URL || "http://localhost");
 const useStyles = makeStyles({
   invalid: {
     color: "red",
@@ -43,7 +47,7 @@ export default function TodoItem({ todo, onDelete }) {
 
   const tryTillSave = async () => {
     const save = async () => {
-      const response = await axios.post("/api/todos/create", todo);
+      const response = await todoClient.post("/api/todos/create", todo);
       // create success
       todo.id = response.data;
     };
@@ -73,7 +77,7 @@ export default function TodoItem({ todo, onDelete }) {
     }
     setStateName("Deleting...");
     const del = async () => {
-      const response = await axios.post("/api/todos/delete", {
+      const response = await todoClient.post("/api/todos/delete", {
         ids: [todo.id],
       });
       if (onDelete != null) {
@@ -104,7 +108,7 @@ export default function TodoItem({ todo, onDelete }) {
       </ListItemIcon>
       <ListItemIcon>
         <IconButton onClick={handleDelete}>
-          <Icon button>delete</Icon>
+          <Icon>delete</Icon>
         </IconButton>
       </ListItemIcon>
     </ListItem>
