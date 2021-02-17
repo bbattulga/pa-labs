@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import List from "@material-ui/core/List/List";
 import useSwr from "swr";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -27,55 +27,28 @@ const useStyles = makeStyles({
   submitBtn: {
     marginBottom: 40,
   },
+  invalid: {
+    color: "red",
+  },
 });
 
 export default function TodoApp(props) {
   const classes = useStyles();
 
   const [todoName, setTodoName] = useState("");
-  const todosInitial = useContext(TodoContext);
-  const [todos, setTodos] = useState(todosInitial);
+  const { data } = useContext(TodoContext);
+  const [todos, setTodos] = useState(data);
 
   const handleSubmit = async () => {
     if (!todoName || todoName === "") {
       return;
     }
-    const save = async () => {
-      setTodoName("");
-      const todo = { title: todoName };
-      setTodos([{ ...todo, state: "Saving..." }, ...todos]);
-      const result = await axios.post("/api/todos/create", todo);
-      todo.id = result;
-      setTodos([todo, ...todos]);
-    };
-    try {
-      save();
-    } catch (e) {
-      console.log("create failed");
-      setTimeout(() => {
-        console.log("retryin to save...");
-        save();
-      }, 5000);
-    }
+    setTodoName("");
+    const todo = { title: todoName, created_at: `${Date()}` };
+    setTodos([todo, ...todos]);
   };
   const handleDelete = async (id) => {
-    if (!id) {
-      return;
-    }
-    const todo = todos.filter((t) => t.id == id)[0];
-    todo.state = "Deleting...";
-    setTodos([...todos]);
-    const result = await axios.post("/api/todos/delete", {
-      ids: [id],
-    });
-    if (!result) {
-      // failed to delete
-      todo.state = "Failed to delete";
-      setTodos([...todos]);
-    } else {
-      // delete succeed
-      setTodos(todos.filter((t) => t.id != id));
-    }
+    setTodos(todos.filter((t) => t.id != id));
   };
   return (
     <GridContainer justify="center">
@@ -83,22 +56,16 @@ export default function TodoApp(props) {
         <Input
           value={todoName}
           onChange={(event) => setTodoName(event.target.value)}
-          labelText={"Todo Name"}
-          classNames={classes.input}
         />
         <div></div>
-        <Button
-          color="primary"
-          onClick={handleSubmit}
-          className={classes.submitBtn}
-        >
+        <Button color="primary" onClick={handleSubmit}>
           add data
         </Button>
       </GridItem>
       <GridItem md={8} xs={12}>
         <div className={classes.todosContainer}>
           {todos.map((t) => (
-            <TodoItem {...t} onDelete={handleDelete} />
+            <TodoItem todo={t} onDelete={handleDelete} />
           ))}
         </div>
       </GridItem>

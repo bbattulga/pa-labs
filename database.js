@@ -1,5 +1,4 @@
 const knex = require("knex");
-require("dotenv").config();
 const database = knex({
   client: "pg",
   connection: {
@@ -10,4 +9,4 @@ const database = knex({
     port: process.env.DB_PORT,
   },
 });
-export default database;
+module.exports = database;

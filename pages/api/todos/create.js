@@ -1,6 +1,7 @@
 import db from "database";
 
 export default async function handler(req, res) {
-  const id = await db.insert(req.body).into("todos").returning("id");
+  delete req.body.id;
+  const id = await db("todos").insert(req.body).returning("id");
   res.send(id);
 }

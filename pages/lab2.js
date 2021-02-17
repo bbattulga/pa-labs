@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import axios from "axios";
+import fetch from "node-fetch";
 
 import classnames from "classnames";
 
@@ -15,9 +15,10 @@ import styles from "assets/jss/nextjs-material-kit/pages/componentsSections/typo
 import PageContainer from "components/PageContainer/PageContainer";
 import TodoApp from "components/TodoApp/TodoApp";
 import TodoContext from "components/TodoApp/context/TodoContext";
+import database from "../database";
 
 export default function Lab2Index(props) {
-  const { todos } = props;
+  const { data } = props;
   return (
     <PageContainer>
       <h1>Лаборатори 1 Даалгавар</h1>
@@ -31,7 +32,7 @@ export default function Lab2Index(props) {
       <br />
       <h1>Гүйцэтгэл</h1>
       <br />
-      <TodoContext.Provider value={todos}>
+      <TodoContext.Provider value={{ data }}>
         <TodoApp />
       </TodoContext.Provider>
     </PageContainer>
@@ -39,10 +40,11 @@ export default function Lab2Index(props) {
 }
 
 export async function getServerSideProps(context) {
-  const res = await axios.post("/api/todos");
+  let res = await database.select("*").from("todos").orderBy("id", "DESC");
+  res = res.map((r) => ({ ...r, created_at: `${r.created_at}` }));
   return {
     props: {
-      todos: res.data,
+      data: res,
     },
   };
 }
