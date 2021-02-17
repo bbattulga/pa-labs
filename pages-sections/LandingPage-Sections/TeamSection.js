@@ -18,6 +18,7 @@ import styles from "assets/jss/nextjs-material-kit/pages/landingPageSections/tea
 
 import team1 from "assets/img/faces/avatar.jpg";
 import team2 from "assets/img/faces/christian.jpg";
+import yagami from "assets/img/faces/yagami.jpg";
 import team3 from "assets/img/faces/kendall.jpg";
 
 const useStyles = makeStyles(styles);
@@ -37,16 +38,19 @@ export default function TeamSection() {
           <GridItem xs={12} sm={12} md={4}>
             <Card plain>
               <GridItem xs={12} sm={12} md={6} className={classes.itemGrid}>
-                <img src={team2} alt="..." className={imageClasses} />
+                <img src={yagami} alt="..." className={imageClasses} />
               </GridItem>
               <h4 className={classes.cardTitle}>
                 Б. Баттулга
                 <br />
-                <small className={classes.smallTitle}>Computer Science Student</small>
+                <small className={classes.smallTitle}>
+                  Computer Science Student
+                </small>
               </h4>
               <CardBody>
                 <p className={classes.description}>
-                  Currently Mobile Application Developer at Remif Technologies LLC
+                  Currently Mobile Application Developer at Remif Technologies
+                  LLC
                 </p>
               </CardBody>
               <CardFooter className={classes.justifyCenter}>
